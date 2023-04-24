@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "ShopNet.Core": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:64251;http://localhost:64253"
+    }
+  }
+}

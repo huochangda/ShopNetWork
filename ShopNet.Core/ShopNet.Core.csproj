@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CSRedisCore" Version="3.8.670" />
+    <PackageReference Include="SqlSugar" Version="5.1.4.66" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ShopNet.Common\ShopNet.Common.csproj" />
+  </ItemGroup>
+
+</Project>
