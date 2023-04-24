@@ -47,7 +47,7 @@ namespace ShopNetWork
 
             services.AddControllers();
 
-            RedisServer.Initalize();
+            RedisServer.Initalize();//开启redis缓存服务
 
             services.AddSingleton<IConnection>(sp =>
             {
@@ -58,16 +58,16 @@ namespace ShopNetWork
                     Password = "guest"      // RabbitMQ 密码
                 };
                 return factory.CreateConnection();
-            });
+            });//rabbit交换价创建注入
 
             services.AddScoped<IModel>(sp =>
             {
                 var connection = sp.GetRequiredService<IConnection>();
                 return connection.CreateModel();
-            });
+            });//rabbit队列创建
 
-            //services.AddScoped<RabbitRec>();
-            services.AddAutoIOC();
+            
+            services.AddAutoIOC();//自动依赖注入
             //services.AddScoped ( typeof(IBaseService<>),typeof(BaseService<>)) ;泛型依赖注入
             services.AddDistributedMemoryCache();
 
@@ -78,19 +78,19 @@ namespace ShopNetWork
 
             services.Configure<CookiePolicyOptions>(options =>
             {
-                options.CheckConsentNeeded = context => false;
-                options.MinimumSameSitePolicy = SameSiteMode.None;
+                options.CheckConsentNeeded = context => false;//关闭欧盟协议
+                options.MinimumSameSitePolicy = SameSiteMode.None;//使用默认方案
   
             });
 
-            //services.AddSingleton<MyMiddleware>();
+            //services.AddSingleton<MyMiddleware>();自定义中间件注入
 
-            services.AddScoped<UserActionFilter>();
+            services.AddScoped<UserActionFilter>();//用户方法跟踪过滤器注入
 
             //services.AddControllers(options =>
             //{
             //    options.Filters.Add(typeof(UserActionFilter));
-            //});
+            //});全局过滤器
 
             services.AddScoped<RedisCache>();
 
@@ -217,11 +217,11 @@ namespace ShopNetWork
                 
             }
 
-            app.UseCookiePolicy();
+            app.UseCookiePolicy();//使用cookie配置
 
-            app.UseSession();
+            app.UseSession();//使用session
 
-            //app.UseRabbitMqReceived();
+            //app.UseRabbitMqReceived();使用rabbitmq中间件
 
             app.UseCors("ShopNet");
 

@@ -6,6 +6,9 @@ using static ShopNet.Core.ReidsServer;
 
 namespace ShopNet.Core
 {
+    /// <summary>
+    /// 缓存帮助类
+    /// </summary>
     public class RedisCache : ICacheService
     {
         public void Add<V>(string key, V value)

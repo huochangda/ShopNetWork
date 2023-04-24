@@ -4,6 +4,9 @@ using System;
 
 namespace ShopNet.Common
 {
+    /// <summary>
+    /// 全局配置文件获取
+    /// </summary>
     public class AppSettings
     {
         public static IConfiguration Configuration { get; set; }

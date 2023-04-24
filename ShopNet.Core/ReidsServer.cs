@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace ShopNet.Core
 {
+    /// <summary>
+    /// 注入CSRedis服务
+    /// </summary>
     public class ReidsServer
     {
         public static class RedisServer

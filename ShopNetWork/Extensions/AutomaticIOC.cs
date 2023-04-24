@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace ShopNetWork.Extensions
 {
+    /// <summary>
+    /// 自动依赖注入
+    /// </summary>
     public static class AutomaticIOC
     {
         /// <summary>

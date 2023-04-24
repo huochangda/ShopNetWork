@@ -14,6 +14,9 @@ using NPOI.HSSF.Util;
 
 namespace ShopNetWork.Extensions
 {
+    /// <summary>
+    /// Excel导入导出封装
+    /// </summary>
     public class ExcelPack
     {
         /// <summary>

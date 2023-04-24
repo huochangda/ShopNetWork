@@ -7,20 +7,23 @@ using SqlSugar;
 
 namespace ShopNetWork.Controllers
 {
+    /// <summary>
+    /// sqlsugar操作
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class DbHandleController : ControllerBase
     {
         private readonly ISqlSugarClient db;
-        /// <summary>
-        /// 用户服务接口
-        /// </summary>
 
         public DbHandleController(ISqlSugarClient db)
         {
             this.db = db;
         }
-
+        /// <summary>
+        /// codefirst方法
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("CreateDtabase")]
         public IActionResult CreateDtabase()
         {

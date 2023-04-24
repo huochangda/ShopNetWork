@@ -1,5 +1,8 @@
 ﻿namespace ShopNetWork.Extensions
 {
+    /// <summary>
+    /// jwt配置类
+    /// </summary>
     public class TokenConfig
     {
         /// <summary>

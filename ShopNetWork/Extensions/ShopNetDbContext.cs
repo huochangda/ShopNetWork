@@ -6,6 +6,9 @@ using System;
 
 namespace ShopNetWork.Extensions
 {
+    /// <summary>
+    /// sqlsugar上下文依赖注入
+    /// </summary>
     public static class ShopNetDbContext
     {
         public static void AddSqlsugarSetup(this IServiceCollection services)

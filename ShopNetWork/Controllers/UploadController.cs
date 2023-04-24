@@ -12,6 +12,9 @@ using SqlSugar;
 
 namespace ShopNetWork.Controllers
 {
+    /// <summary>
+    /// 文件上传控制器
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class UploadController : ControllerBase

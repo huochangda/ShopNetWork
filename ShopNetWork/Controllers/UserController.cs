@@ -25,6 +25,8 @@ using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
 using ShopNetWork.Filter;
+using NPOI.SS.Formula.Functions;
+using System.Collections.Generic;
 
 namespace ShopNetWork.Controllers
 {
@@ -33,8 +35,8 @@ namespace ShopNetWork.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
-    [ServiceFilter(typeof(UserActionFilter))]
+    //[Authorize]
+    //[ServiceFilter(typeof(UserActionFilter))]
     public class UserController : ControllerBase
     {
         private readonly IUserServices userServices;
@@ -164,10 +166,17 @@ namespace ShopNetWork.Controllers
                 //    ( ) => { return predicate.AndIF(!string.IsNullOrEmpty(parm.address), m => m.UserAddress.Contains(parm.address));  },100);
 
                 var response = userServices.GetPages(predicate.ToExpression(), parm);
-                cacheService.Add("string1", JsonConvert.SerializeObject(response));
-              var pr=JsonConvert.DeserializeObject<PagedInfo<User>>(cacheService.Get<string>("string1"));
-                bool tr = pr.Equals(response);
-                return Ok(pr);
+                ISugarQueryable<User> queryable =db.Queryable<User>();
+                
+                // 遍历List<T>并添加查询条件
+                response.DataSource.ForEach(item => {
+                    queryable = queryable.Where(t => t.IsOpen == item.IsOpen);
+                });
+               response.DataSource= queryable.Includes(a=>a.Role).ToList();
+                //  cacheService.Add("string1", JsonConvert.SerializeObject(response));
+                //var pr=JsonConvert.DeserializeObject<PagedInfo<User>>(cacheService.Get<string>("string1"));
+                //bool tr = pr.Equals(response);
+                return Ok(response);
             }
             catch (Exception ex)
             {
@@ -210,7 +219,7 @@ namespace ShopNetWork.Controllers
         public IActionResult GetAgeStatistics()
         {
             //var data = db.Queryable<User>().ToList().Where(an => an.IsOpen == true);
-            var data1 = db.Queryable<User>().Includes(a=>a.Role).ToList();
+            var data1 = db.Queryable<User>().Where(a=>a.IsOpen==true).Includes(a=>a.Role).ToList();
             return Ok(data1);
 
         }
@@ -224,7 +233,18 @@ namespace ShopNetWork.Controllers
             var data = db.Queryable<User>().ToList().GroupBy(a => new { a.UserAddress });
             return Ok(data);
         }
-        
+
+        /// <summary>
+        /// 获取用户地址下拉列表
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetRoleList")]
+        public IActionResult GetRoleList()
+        {
+            var data = db.Queryable<Role>().ToList();
+            return Ok(data);
+        }
+
 
     }
 }

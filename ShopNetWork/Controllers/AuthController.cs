@@ -16,6 +16,9 @@ using Ex.Common;
 
 namespace ShopNetWork.Controllers
 {
+    /// <summary>
+    /// 权限控制器
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase

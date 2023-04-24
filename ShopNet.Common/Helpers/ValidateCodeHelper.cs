@@ -33,6 +33,9 @@ using System.Net.Http;
 
 namespace Ex.Common
 {
+    /// <summary>
+    /// 验证码帮助类
+    /// </summary>
 
     public static class ValidateCodeHelper
     {

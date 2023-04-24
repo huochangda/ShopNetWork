@@ -5,6 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Model
 {
+    /// <summary>
+    /// 用户模型
+    /// </summary>
     [SugarTable("User")]
     public class User 
     {

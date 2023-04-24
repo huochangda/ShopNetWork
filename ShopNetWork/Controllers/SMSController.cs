@@ -9,14 +9,16 @@ using System.Text;
 
 namespace ShopNetWork.Controllers
 {
+    /// <summary>
+    /// 电话发短信控制器
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class SMSController : ControllerBase
     {
+        
         private readonly ISqlSugarClient db;
-        /// <summary>
-        /// 用户服务接口
-        /// </summary>
+       
 
         public SMSController(ISqlSugarClient db)
         {
