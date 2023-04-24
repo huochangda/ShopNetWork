@@ -18,7 +18,7 @@ namespace ShopNetWork.Middleware
         public async Task Invoke(HttpContext context)
         {
             // 执行自定义中间件逻辑
-            await context.Response.WriteAsync("Hello from MyMiddleware!");
+            await context.Response.WriteAsync("H from MyMiddleware!");
 
             var factory = new ConnectionFactory
             {
