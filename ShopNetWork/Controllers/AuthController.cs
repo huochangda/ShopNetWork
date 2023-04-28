@@ -1,6 +1,7 @@
 ﻿using Ex.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing.Matching;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Model;
@@ -10,7 +11,9 @@ using ShopNetWork.Extensions;
 using ShopNetWork.Interfaces;
 using SqlSugar;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 
@@ -71,8 +74,21 @@ namespace ShopNetWork.Controllers
         [HttpPost("UserLogin")]
         public IActionResult UserLogin(string username, string password, string autocode, string uuid)
         {
+            List<User> response = cacheService.Get<List<User>>("User");
+            
+           response= response.AsEnumerable().Where(a => a.UserName == username && a.PassWord == password).ToList();
+            if(response.Count==0)
+            {
+                response = db.Queryable<User>().Where(a => a.UserName == username && a.PassWord == password).ToList();
+                if (response.Count > 0)
+                {
+                    cacheService.Add<List<User>>("User",response,30);
+                }else
+                {
+                    return Ok(-1);
+                }
+            }
 
-            var response = db.Queryable<User>().Where(a => a.UserName == username && a.PassWord == password).ToList();
             var code = HttpContext.Session.GetString(uuid.ToString());
 
             if (autocode.ToLower() == code.ToLower() && response.Count > 0)

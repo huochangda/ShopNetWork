@@ -28,7 +28,7 @@ namespace ShopNetWork.Interfaces
         public List<Goods> GetGoodsList(int pageIndex, int pageSize, out int totalCount,
             out int pageCount, string? gName, int bId, int gtId, string? sDate, string? eDate)
         {
-            var list2 = cacheService.Get<List<Goods>>("Goods");
+            
             
             var list = Db.Queryable<Goods>().Includes(a => a.GoodsPropType).Includes(a => a.Brand).Where(a => a.IsOpen == true).ToList();
             //cacheService.Add<string>("Goods",JsonConvert.SerializeObject(list));
