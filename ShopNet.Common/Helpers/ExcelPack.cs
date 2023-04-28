@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -12,7 +12,7 @@ using NPOI.XSSF.UserModel;
 using NPOI.HSSF.UserModel;
 using NPOI.HSSF.Util;
 
-namespace ShopNetWork.Extensions
+namespace ShopNet.Common
 {
     /// <summary>
     /// Excel导入导出封装

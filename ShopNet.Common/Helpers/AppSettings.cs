@@ -5,7 +5,7 @@ using System;
 namespace ShopNet.Common
 {
     /// <summary>
-    /// 全局配置文件获取
+    /// 全局配置文件
     /// </summary>
     public class AppSettings
     {

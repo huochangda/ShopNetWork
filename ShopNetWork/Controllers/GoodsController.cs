@@ -105,7 +105,17 @@ namespace ShopNetWork.Controllers
                 throw;
             }
         }
-
+        /// <summary>
+        /// 获取商品列表
+        /// </summary>
+        /// <param name="pageIndex">当前页</param>
+        /// <param name="pageSize">页大小</param>
+        /// <param name="gName">商品名称</param>
+        /// <param name="bId">品牌编号</param>
+        /// <param name="gtId">商品类别编号</param>
+        /// <param name="sDate">开始时间</param>
+        /// <param name="eDate">结束时间</param>
+        /// <returns></returns>
         [HttpGet("GetGoodsList")]
         public IActionResult GetGoodsList(int pageIndex, int pageSize, string? gName, int bId, int gtId, string? sDate, string? eDate)
         {
@@ -120,7 +130,10 @@ namespace ShopNetWork.Controllers
                 pageCount=pageCount,
             });
         }
-
+        /// <summary>
+        /// 获取商品属性类别
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetGoodsPropType")]
         public IActionResult GetGoodsPropType()
         {
@@ -135,7 +148,10 @@ namespace ShopNetWork.Controllers
                 throw;
             }
         }
-
+        /// <summary>
+        /// 获取品牌列表
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetBoand")]
         public IActionResult GetBoand()
         {
@@ -150,6 +166,11 @@ namespace ShopNetWork.Controllers
                 throw;
             }
         }
+        /// <summary>
+        /// 获取商品属性
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("GetGoodsProp")]
         public IActionResult GetGoodsProp(int id)
         {
@@ -164,6 +185,11 @@ namespace ShopNetWork.Controllers
                 throw;
             }
         }
+        /// <summary>
+        /// 商品增加
+        /// </summary>
+        /// <param name="goods"></param>
+        /// <returns></returns>
         [HttpPost("GoodsAdd")]
         public IActionResult GoodsAdd(Goods goods)
         {
@@ -176,6 +202,67 @@ namespace ShopNetWork.Controllers
             catch (System.Exception ex)
             {
                 logger.LogError($"删除商品分类,报错信息{ex.Message}");
+                throw;
+            }
+        }
+        /// <summary>
+        /// 商品修改
+        /// </summary>
+        /// <param name="goods"></param>
+        /// <returns></returns>
+        [HttpPost("GoodsUpdate")]
+        public IActionResult GoodsUpdate(Goods goods)
+        {
+            try
+            {
+
+                var list = db.Updateable(goods).RemoveDataCache().ExecuteCommand();
+                return Ok(list);
+            }
+            catch (System.Exception ex)
+            {
+                logger.LogError($"修改商品错误,报错信息{ex.Message}");
+                throw;
+            }
+        }
+        /// <summary>
+        /// 商品删除
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("GoodsDelete")]
+        public IActionResult GoodsDelete(int id)
+        {
+            try
+            {
+              Goods goods =  db.Queryable<Goods>().Where(a => a.GoodId == id).ToList()[0];
+                goods.IsOpen=false;
+                var list = db.Updateable(goods).RemoveDataCache().ExecuteCommand();
+                return Ok(list);
+            }
+            catch (System.Exception ex)
+            {
+                logger.LogError($"删除商品错误,报错信息{ex.Message}");
+                throw;
+            }
+        }
+        /// <summary>
+        /// 商品反填
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("GoodsBackFillById")]
+        public IActionResult GoodsBackFillById(int id)
+        {
+            try
+            {
+
+            var list = db.Queryable<Goods>().Includes(a => a.GoodsPropType).Includes(a => a.Brand).Where(a => a.IsOpen == true&&a.GoodId==id).ToList(); ;
+                return Ok(list);
+            }
+            catch (System.Exception ex)
+            {
+                logger.LogError($"反填商品错误,报错信息{ex.Message}");
                 throw;
             }
         }

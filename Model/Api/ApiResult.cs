@@ -2,15 +2,14 @@
 * ==============================================================================
 *
 * FileName: ApiResult.cs
-* Created: 2020/3/26 13:52:51
+* Created: 2023/4/26 13:52:51
 * Author: Meiam
 * Description: 
 *
 * ==============================================================================
 */
+
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Model
 {
@@ -20,7 +19,6 @@ namespace Model
     /// <typeparam name="T"></typeparam>
     public class ApiResult
     {
-
         public ApiResult()
         {
             StatusCode = 0;
@@ -40,7 +38,6 @@ namespace Model
         /// 返回时间戳
         /// </summary>
         public string Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeSeconds().ToString();
-
     }
 
     public class ApiResult<T> : ApiResult
@@ -49,7 +46,5 @@ namespace Model
         /// 接口返回值
         /// </summary>
         public T Data { get; set; }
-
     }
-
 }

@@ -33,6 +33,7 @@ namespace ShopNetWork.Interfaces
         public object UserList(UserQueryDto parm)
         {
             var predicate = Expressionable.Create<User>();
+            ///表达式树
             predicate = predicate.And(m => m.IsOpen == true);
             predicate = predicate.AndIF(!string.IsNullOrEmpty(parm.username), m => m.UserName.Contains(parm.username));
             predicate = predicate.AndIF(!string.IsNullOrEmpty(parm.truename), m => m.TrueName.Contains(parm.truename));

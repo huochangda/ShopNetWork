@@ -160,36 +160,37 @@ namespace ShopNetWork
 
             services.AddAuthentication(options =>
             {
+                //方法向DI容器添加身份验证服务，并将默认的身份验证方案设置为JwtBearerDefaults.AuthenticationScheme
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(x =>
+            }).AddJwtBearer(x =>//AddJwtBearer()方法配置JwtBearerOptions
             {
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
+                x.RequireHttpsMetadata = false; //是否要使用HTTPS（x.RequireHttpsMetadata）
+                x.SaveToken = true;//保存令牌（x.SaveToken）
                 x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(TokenConfig.secret)),//秘钥设置
-                    ValidIssuer = TokenConfig.issuer,
-                    ValidAudience = TokenConfig.audience,
-                    ValidateIssuer = false,
-                    ValidateAudience = false
+                {//令牌验证参数（x.TokenValidationParameters）
+                    ValidateIssuerSigningKey = true,//是否验证发行方签名密钥
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(TokenConfig.secret)),//造函数来创建一个新的SymmetricSecurityKey实例。秘钥设置验证JWT的签名
+                    ValidIssuer = TokenConfig.issuer,//设置JWT有效的发行方（Issuer）
+                    ValidAudience = TokenConfig.audience,//设置JWT接收者（Audience）的有效值此属性将被用于验证JWT的接收者是否与TokenConfig.audience属性中指定的值相匹配。
+                    ValidateIssuer = false,//指示是否验证JWT的发行方
+                    ValidateAudience = true//指示是否验证JWT的接收方
                 };
                 x.Events = new JwtBearerEvents()
                 {
-                    OnMessageReceived = context =>
+                    OnMessageReceived = context =>//为JWT身份验证处理程序添加一个事件委托，以从HTTP请求消息中提取JWT令牌并将其存储在HttpContext中，以便后续使用。
                     {
-                        context.Token = context.Request.Query["access_token"];
+                        context.Token = context.Request.Query["access_token"];//从HTTP请求的查询字符串中获取名为access_token的JWT令牌，并将其存储在HttpContext中的Token属性中。
                         return Task.CompletedTask;
                     },
-                    OnAuthenticationFailed = context =>
+                    OnAuthenticationFailed = context =>//为JWT身份验证处理程序添加一个事件委托，以处理身份验证失败的情况。如果抛出SecurityTokenExpiredException异常，则将"Token-Expired"添加到响应头中表示令牌已过期。
                     {
                         // 如果过期，则把<是否过期>添加到，返回头信息中
                         if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
                         {
                             context.Response.Headers.Add("Token-Expired", "true");
                         }
-                        return Task.CompletedTask;
+                        return Task.CompletedTask;//返回一个已完成的任务，以指示事件已完成处理
                     }
                 };
             });
