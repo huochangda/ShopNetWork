@@ -49,7 +49,7 @@ namespace Model
 
         [SugarColumn(IsNullable = false, DefaultValue = "true")]
         public bool state { get; set; } = true;
-        [SugarColumn(IsNullable = false, DefaultValue="北京", IsOnlyIgnoreInsert=true)]
+        [SugarColumn(IsNullable = true, DefaultValue="北京")]
         public string UserAddress { get; set; }
         [SugarColumn(IsNullable = true)]
         public string TrueName { get; set; }

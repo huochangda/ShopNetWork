@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -12,19 +11,12 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NLog.Extensions.Logging;
 using NLog.Web;
-using Org.BouncyCastle.Asn1.X509.Qualified;
 using RabbitMQ.Client;
 using ShopNet.Core;
-using ShopNetWork.Controllers;
 using ShopNetWork.Extensions;
 using ShopNetWork.Filter;
-using ShopNetWork.Middleware;
-using SqlSugar;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,7 +36,6 @@ namespace ShopNetWork
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
 
             RedisServer.Initalize();//开启redis缓存服务
@@ -66,7 +57,6 @@ namespace ShopNetWork
                 return connection.CreateModel();
             });//rabbit队列创建
 
-            
             services.AddAutoIOC();//自动依赖注入
             //services.AddScoped ( typeof(IBaseService<>),typeof(BaseService<>)) ;泛型依赖注入
             services.AddDistributedMemoryCache();
@@ -80,7 +70,6 @@ namespace ShopNetWork
             {
                 options.CheckConsentNeeded = context => false;//关闭欧盟协议
                 options.MinimumSameSitePolicy = SameSiteMode.None;//使用默认方案
-  
             });
 
             //services.AddSingleton<MyMiddleware>();自定义中间件注入
@@ -95,6 +84,7 @@ namespace ShopNetWork
             services.AddScoped<RedisCache>();
 
             #region swagger 配置
+
             //swagger添加报文头，方便做登录和退出：
             services.AddSwaggerGen(c =>
             {
@@ -102,7 +92,7 @@ namespace ShopNetWork
                 //配置注释显示swagge ui当中
                 var xmlfile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlpath = Path.Combine(AppContext.BaseDirectory, xmlfile);
-                c.IncludeXmlComments(xmlpath,true);
+                c.IncludeXmlComments(xmlpath, true);
                 //Token绑定到configureServices
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -128,15 +118,18 @@ namespace ShopNetWork
           }
         });
             });
-            #endregion
+
+            #endregion swagger 配置
 
             #region SqlSugar
+
             // 添加 SqlSugar
             services.AddSqlsugarSetup();
 
-            #endregion
+            #endregion SqlSugar
 
             #region 跨域
+
             services.AddCors(options =>
             {
                 options.AddPolicy("ShopNet"//请求名称
@@ -149,23 +142,28 @@ namespace ShopNetWork
                         .WithExposedHeaders("Content-Disposition");//
                     });
             });
-            #endregion
+
+            #endregion 跨域
 
             #region 日志配置
+
             services.AddLogging(loggingBuilder =>
             {
                 loggingBuilder.ClearProviders();
                 loggingBuilder.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
                 loggingBuilder.AddNLog();
             });
-            #endregion
+
+            #endregion 日志配置
 
             #region jwt配置
-            services.AddAuthentication(options => {
+
+            services.AddAuthentication(options =>
+            {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(x => {
-
+            }).AddJwtBearer(x =>
+            {
                 x.RequireHttpsMetadata = false;
                 x.SaveToken = true;
                 x.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
@@ -194,27 +192,27 @@ namespace ShopNetWork
                         return Task.CompletedTask;
                     }
                 };
-
             });
-            #endregion
 
+            #endregion jwt配置
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             #region jwt
+
             //在Configure添加授权和鉴权的组件：
             app.UseAuthentication();//开启认证
             app.UseAuthorization();//开启授权
-            #endregion
+
+            #endregion jwt
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ShopNetWork v1"));
-                
             }
 
             app.UseCookiePolicy();//使用cookie配置
@@ -228,6 +226,7 @@ namespace ShopNetWork
             app.UseRouting();
 
             #region 静态文件
+
             app.UseStaticFiles(new StaticFileOptions
             {
                 //静态资源存储路径
@@ -235,19 +234,15 @@ namespace ShopNetWork
                 //静态资源获取路径
                 RequestPath = "/wwwroot/Images"
             });
-            #endregion
-            
+
+            #endregion 静态文件
+
             app.UseAuthorization();
 
-            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
         }
-
-        
-
-        
     }
 }

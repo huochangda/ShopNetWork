@@ -1,18 +1,18 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Ex.Common;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Model;
 using RabbitMQ.Client;
 using ShopNet.Core;
 using ShopNetWork.Extensions;
 using ShopNetWork.Interfaces;
 using SqlSugar;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System;
-using Model;
-using Ex.Common;
 
 namespace ShopNetWork.Controllers
 {
@@ -27,24 +27,20 @@ namespace ShopNetWork.Controllers
         private readonly ISqlSugarClient db;
         private readonly RedisCache cacheService;
         private readonly ILogger<UserController> logger;
-        private readonly IModel model;
-        private readonly IConnection con;
         private readonly IUnitOfWork unitOfWork;
+
         /// <summary>
         /// 用户服务接口
         /// </summary>
         public AuthController(ISqlSugarClient db, IUserServices userServices, RedisCache cacheService,
             ILogger<UserController> logger, IConnection con, IModel model, IUnitOfWork unitOfWork)
         {
-            this.con = con;
-            this.model = model;
             this.logger = logger;
             this.cacheService = cacheService;
             this.db = db;
             this.userServices = userServices;
             this.unitOfWork = unitOfWork;
         }
-
 
         [HttpGet("GetToken")]
         public string GetToken()
@@ -64,7 +60,6 @@ namespace ShopNetWork.Controllers
             return token;
         }
 
-
         /// <summary>
         /// 用户登录
         /// </summary>
@@ -76,26 +71,23 @@ namespace ShopNetWork.Controllers
         [HttpPost("UserLogin")]
         public IActionResult UserLogin(string username, string password, string autocode, string uuid)
         {
-
             var response = db.Queryable<User>().Where(a => a.UserName == username && a.PassWord == password).ToList();
             var code = HttpContext.Session.GetString(uuid.ToString());
 
-            
-
             if (autocode.ToLower() == code.ToLower() && response.Count > 0)
             {
-             var claims = new[] {
+                var claims = new[] {
              new Claim(ClaimTypes.Name,username),
              new Claim(ClaimTypes.Upn,password)
             };
-            //加密密钥
-            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(TokenConfig.secret));
-            ///签名
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var jwttoken = new JwtSecurityToken(TokenConfig.issuer, TokenConfig.audience, claims, DateTime.Now
-                , DateTime.Now.AddMinutes(TokenConfig.accessExpiration), credentials);
-            var token = new JwtSecurityTokenHandler().WriteToken(jwttoken);
-                return Ok(new { state = 1, userinfo = response,token=token });
+                //加密密钥
+                var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(TokenConfig.secret));
+                ///签名
+                var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                var jwttoken = new JwtSecurityToken(TokenConfig.issuer, TokenConfig.audience, claims, DateTime.Now
+                    , DateTime.Now.AddMinutes(TokenConfig.accessExpiration), credentials);
+                var token = new JwtSecurityTokenHandler().WriteToken(jwttoken);
+                return Ok(new { state = 1, userinfo = response, token = token });
             }
             else
             {
@@ -136,7 +128,6 @@ namespace ShopNetWork.Controllers
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -150,16 +141,15 @@ namespace ShopNetWork.Controllers
         [HttpPost("AddRole")]
         public IActionResult AddRole(User user)
         {
-
             var response = db.Insertable(user).RemoveDataCache().ExecuteCommand();
             return Ok(response);
         }
+
         [HttpPost("UpdateRole")]
         public IActionResult UpdateRole(User user)
         {
             var users = db.Updateable(user).ExecuteCommand();
             return Ok(users);
         }
-
     }
 }

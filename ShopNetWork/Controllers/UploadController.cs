@@ -12,13 +12,7 @@ using SqlSugar;
 
 namespace ShopNetWork.Controllers
 {
-    /// <summary>
-    /// 文件上传控制器
-    /// </summary>
-    [Route("api/[controller]")]
-    [ApiController]
-    public class UploadController : ControllerBase
-    {
+    
         [Route("api/[controller]")]
         [ApiController]
         public class UpLoadController : ControllerBase
@@ -34,9 +28,9 @@ namespace ShopNetWork.Controllers
 
 
             [HttpPost("IUpIMG")]
-            public string ICreatIMG()
+            public string ICreatIMG(IFormFile file)
             {
-                var file = HttpContext.Request.Form.Files[0];
+                //var file = HttpContext.Request.Form.Files[0];
                 if (file == null)
                 {
                     return "没有文件";
@@ -60,7 +54,7 @@ namespace ShopNetWork.Controllers
                     fileStream.Flush();
                 }
                 string apiurl = configuration.GetValue<string>("ApiUrl");
-                return "http://localhost:4003/wwwroot/Images/" + newfilename;
+                return "http://localhost:30030/wwwroot/Images/" + newfilename;
             }
 
             /// <summary>
@@ -311,4 +305,4 @@ namespace ShopNetWork.Controllers
 
         }
     }
-}
+

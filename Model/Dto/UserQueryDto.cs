@@ -16,5 +16,7 @@ namespace Model.Dto
         public string truename { get; set; }
 
         public string address { get; set; }
+
+        public int rolename { get; set; }
     }
 }

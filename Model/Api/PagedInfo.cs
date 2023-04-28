@@ -46,7 +46,7 @@ namespace Model
             get { return PageIndex + 1 < TotalPages; }
         }
 
-        public List<T> DataSource { get; set; }
+        public object DataSource { get; set; }
 
         public object TotalField { get; set; }
     }

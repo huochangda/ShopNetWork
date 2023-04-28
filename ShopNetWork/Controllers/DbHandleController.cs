@@ -28,7 +28,14 @@ namespace ShopNetWork.Controllers
         public IActionResult CreateDtabase()
         {
             db.DbMaintenance.CreateDatabase(); // 注意 ：Oracle和个别国产库需不支持该方法，需要手动建库 
+           //商品
+            db.CodeFirst.InitTables(typeof(Goods));
+            db.CodeFirst.InitTables(typeof(GoodsProp));
+            db.CodeFirst.InitTables(typeof(GoodsPropType));
+            db.CodeFirst.InitTables(typeof(Brand));
+            //用户
             db.CodeFirst.InitTables(typeof(Role));
+            db.CodeFirst.InitTables(typeof(GoodType));
             db.CodeFirst.InitTables(typeof(LoginLog));
             //创建表：根据实体类CodeFirstTable1  (所有数据库都支持)    
             db.CodeFirst.InitTables(typeof(User));

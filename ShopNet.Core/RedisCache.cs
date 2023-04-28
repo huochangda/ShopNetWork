@@ -7,7 +7,7 @@ using static ShopNet.Core.ReidsServer;
 namespace ShopNet.Core
 {
     /// <summary>
-    /// 缓存帮助类
+    /// 缓存
     /// </summary>
     public class RedisCache : ICacheService
     {
