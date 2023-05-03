@@ -6,10 +6,12 @@
 
   <ItemGroup>
     <PackageReference Include="CSRedisCore" Version="3.8.670" />
-    <PackageReference Include="SqlSugar" Version="5.1.4.66" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.5.0" />
+    <PackageReference Include="SqlSugarCore" Version="5.1.4.66" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Model\Model.csproj" />
     <ProjectReference Include="..\ShopNet.Common\ShopNet.Common.csproj" />
   </ItemGroup>
 

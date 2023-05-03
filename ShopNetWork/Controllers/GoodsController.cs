@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Model;
 using Model.Shop;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using ShopNet.Core;
 using ShopNetWork.Interfaces;
@@ -105,6 +106,7 @@ namespace ShopNetWork.Controllers
                 throw;
             }
         }
+
         /// <summary>
         /// 获取商品列表
         /// </summary>
@@ -121,15 +123,16 @@ namespace ShopNetWork.Controllers
         {
             int totalCount = 0;
             int pageCount = 0;
-            var data= goodTypeServices.GetGoodsList(pageIndex, pageSize, out totalCount, out pageCount
+            var data = goodTypeServices.GetGoodsList(pageIndex, pageSize, out totalCount, out pageCount
                , gName, bId, gtId, sDate, eDate);
             return Ok(new
             {
-                data=data,
-                totalCount=totalCount,
-                pageCount=pageCount,
+                data = data,
+                totalCount = totalCount,
+                pageCount = pageCount,
             });
         }
+
         /// <summary>
         /// 获取商品属性类别
         /// </summary>
@@ -148,6 +151,7 @@ namespace ShopNetWork.Controllers
                 throw;
             }
         }
+
         /// <summary>
         /// 获取品牌列表
         /// </summary>
@@ -166,6 +170,7 @@ namespace ShopNetWork.Controllers
                 throw;
             }
         }
+
         /// <summary>
         /// 获取商品属性
         /// </summary>
@@ -176,7 +181,7 @@ namespace ShopNetWork.Controllers
         {
             try
             {
-                var list = db.Queryable<GoodsProp>().Where(a=>a.GPTId==id).ToList();
+                var list = db.Queryable<GoodsProp>().Where(a => a.GPTId == id).ToList();
                 return Ok(list);
             }
             catch (System.Exception ex)
@@ -185,6 +190,7 @@ namespace ShopNetWork.Controllers
                 throw;
             }
         }
+
         /// <summary>
         /// 商品增加
         /// </summary>
@@ -195,9 +201,22 @@ namespace ShopNetWork.Controllers
         {
             try
             {
+                ///RabbitMq案例
+                RabbitHelper.rabbitmq.Receive(GoodsAddDataMq.exchangeName,
+                    GoodsAddDataMq.routingKey,
+                    GoodsAddDataMq.queueName,
+                    (msg) =>
+                    {
+                        Goods goods = JsonConvert.DeserializeObject<Goods>(msg);
+                        var list = db.Insertable(goods).RemoveDataCache().ExecuteCommand();
+                    }, GoodsAddDataMq.exchangeType
+                    );
 
-                var list = db.Insertable(goods).RemoveDataCache().ExecuteCommand();
-                return Ok(list);
+                RabbitHelper.rabbitmq.Send(GoodsAddDataMq.exchangeName, GoodsAddDataMq.routingKey, GoodsAddDataMq.queueName, goods, GoodsAddDataMq.exchangeType);
+
+                //var list = db.Insertable(goods).RemoveDataCache().ExecuteCommand();
+
+                return Ok(1);
             }
             catch (System.Exception ex)
             {
@@ -205,6 +224,7 @@ namespace ShopNetWork.Controllers
                 throw;
             }
         }
+
         /// <summary>
         /// 商品修改
         /// </summary>
@@ -215,7 +235,6 @@ namespace ShopNetWork.Controllers
         {
             try
             {
-
                 var list = db.Updateable(goods).RemoveDataCache().ExecuteCommand();
                 return Ok(list);
             }
@@ -225,6 +244,7 @@ namespace ShopNetWork.Controllers
                 throw;
             }
         }
+
         /// <summary>
         /// 商品删除
         /// </summary>
@@ -235,8 +255,8 @@ namespace ShopNetWork.Controllers
         {
             try
             {
-              Goods goods =  db.Queryable<Goods>().Where(a => a.GoodId == id).ToList()[0];
-                goods.IsOpen=false;
+                Goods goods = db.Queryable<Goods>().Where(a => a.GoodId == id).ToList()[0];
+                goods.IsOpen = false;
                 var list = db.Updateable(goods).RemoveDataCache().ExecuteCommand();
                 return Ok(list);
             }
@@ -246,6 +266,7 @@ namespace ShopNetWork.Controllers
                 throw;
             }
         }
+
         /// <summary>
         /// 商品反填
         /// </summary>
@@ -256,8 +277,7 @@ namespace ShopNetWork.Controllers
         {
             try
             {
-
-            var list = db.Queryable<Goods>().Includes(a => a.GoodsPropType).Includes(a => a.Brand).Where(a => a.IsOpen == true&&a.GoodId==id).ToList(); ;
+                var list = db.Queryable<Goods>().Includes(a => a.GoodsPropType).Includes(a => a.Brand).Where(a => a.IsOpen == true && a.GoodId == id).ToList(); ;
                 return Ok(list);
             }
             catch (System.Exception ex)
@@ -266,6 +286,5 @@ namespace ShopNetWork.Controllers
                 throw;
             }
         }
-
     }
 }

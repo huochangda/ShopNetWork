@@ -199,10 +199,12 @@ namespace ShopNetWork
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IConsumer consumer)
         {
             #region jwt
 
+            consumer.Receive();
+            //consumer.Stop();
             //在Configure添加授权和鉴权的组件：
             app.UseAuthentication();//开启认证
             app.UseAuthorization();//开启授权
