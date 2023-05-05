@@ -8,6 +8,7 @@ using ShopNetWork.Interfaces;
 using SqlSugar;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Yitter.IdGenerator;
 
 namespace ShopNetWork.Controllers
@@ -85,6 +86,36 @@ namespace ShopNetWork.Controllers
                 list = list.Where(a => ((int)a.OrderState) == (state));
             }
             return Ok(list);
+        }
+
+        [HttpGet("GetEnumOrderState")]
+        public IActionResult GetEnumOrderState()
+        {
+            OrderState state = new OrderState();
+            Dictionary<string, int> list = Enum.GetValues(typeof(OrderState))
+            .Cast<OrderState>()
+            .ToDictionary(enumVal => enumVal.ToString(), enumVal => (int)enumVal);
+            var list2 = list.Select(a => new
+            {
+                label = a.Key,
+                value = a.Value.ToString()
+            });
+            return Ok(list2);
+        }
+
+        [HttpGet("GetEnumOrderType")]
+        public IActionResult GetEnumOrderType()
+        {
+            OrderState state = new OrderState();
+            Dictionary<string, int> list = Enum.GetValues(typeof(PayType))
+            .Cast<PayType>()
+            .ToDictionary(enumVal => enumVal.ToString(), enumVal => (int)enumVal);
+            var list2 = list.Select(a => new
+            {
+                label = a.Key,
+                value = a.Value.ToString()
+            });
+            return Ok(list2);
         }
     }
 }
