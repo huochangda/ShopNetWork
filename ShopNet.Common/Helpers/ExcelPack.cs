@@ -1,5 +1,4 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
@@ -23,9 +22,9 @@ namespace ShopNet.Common
         /// 导出excal封装
         /// </summary>
         /// <typeparam name ="T"></typeparam>
-        /// <param name     =    "data"></param>
+        /// <param name="data"></param>
         /// <returns></returns>
-        
+
         public static byte[] ListToExcelPack<T>(List<T> data)
         {
             // 2007版本
@@ -109,7 +108,6 @@ namespace ShopNet.Common
                                 columnWidth = length + 1;
                             }//若当前单元格内容宽度大于列宽，则调整列宽为当前单元格宽度，后面的+1是我人为的将宽度增加一个字符
                         }
-
                     }
                     sheet.SetColumnWidth(columnNum, columnWidth * 256);
                 }
@@ -132,9 +130,7 @@ namespace ShopNet.Common
                 Console.WriteLine("Exception: " + ex.Message);
                 return null;
             }
-
         }
-
 
         /// <summary>
         /// 导入excal封装
@@ -143,7 +139,7 @@ namespace ShopNet.Common
         /// <param name="stream"></param>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        
+
         public static List<T> ExcelToListPack<T>(Stream stream, string fileName) where T : class, new()
         {
             IWorkbook workbook = null;
@@ -200,9 +196,7 @@ namespace ShopNet.Common
                         //判断主是不是主键
                         _value = row.GetCell(j).ToString();
 
-
                         _type = (properties[index].PropertyType).FullName;
-
 
                         if (_type == "System.String")
                         {
@@ -249,7 +243,4 @@ namespace ShopNet.Common
             return list;
         }
     }
-
-
-    
 }

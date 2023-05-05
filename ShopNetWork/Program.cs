@@ -22,13 +22,12 @@ namespace ShopNetWork
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    
                     webBuilder.UseStartup<Startup>().ConfigureLogging(logging =>
                     {
                         logging.ClearProviders();
                         logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Debug);
                     })
-                    .UseNLog().UseRabbitMqReceived();
+                    .UseNLog();
                 });
     }
 }

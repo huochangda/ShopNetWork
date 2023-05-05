@@ -20,6 +20,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Yitter.IdGenerator;
 using static ShopNet.Core.ReidsServer;
 
 namespace ShopNetWork
@@ -39,6 +40,8 @@ namespace ShopNetWork
             services.AddControllers();
 
             RedisServer.Initalize();//¿ªÆôredis»º´æ·þÎñ
+
+            YitIdHelper.SetIdGenerator(new IdGeneratorOptions());
 
             services.AddSingleton<IConnection>(sp =>
             {

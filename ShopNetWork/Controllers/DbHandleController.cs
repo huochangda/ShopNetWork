@@ -20,6 +20,7 @@ namespace ShopNetWork.Controllers
         {
             this.db = db;
         }
+
         /// <summary>
         /// codefirst方法
         /// </summary>
@@ -27,8 +28,13 @@ namespace ShopNetWork.Controllers
         [HttpGet("CreateDtabase")]
         public IActionResult CreateDtabase()
         {
-            db.DbMaintenance.CreateDatabase(); // 注意 ：Oracle和个别国产库需不支持该方法，需要手动建库 
-           //商品
+            db.DbMaintenance.CreateDatabase(); // 注意 ：Oracle和个别国产库需不支持该方法，需要手动建库
+
+            //订单
+            db.CodeFirst.InitTables(typeof(Order));
+            db.CodeFirst.InitTables(typeof(OrderGoods));
+            db.CodeFirst.InitTables(typeof(OrderLogistics));
+            //商品
             db.CodeFirst.InitTables(typeof(Goods));
             db.CodeFirst.InitTables(typeof(GoodsProp));
             db.CodeFirst.InitTables(typeof(GoodsPropType));
@@ -37,11 +43,11 @@ namespace ShopNetWork.Controllers
             db.CodeFirst.InitTables(typeof(Role));
             db.CodeFirst.InitTables(typeof(GoodType));
             db.CodeFirst.InitTables(typeof(LoginLog));
-            //创建表：根据实体类CodeFirstTable1  (所有数据库都支持)    
+            //创建表：根据实体类CodeFirstTable1  (所有数据库都支持)
             db.CodeFirst.InitTables(typeof(User));
             return Ok(new
             {
-                ChengCount= 0,
+                ChengCount = 0,
             });
         }
     }
