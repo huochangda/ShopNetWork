@@ -57,9 +57,33 @@ namespace ShopNetWork.Controllers
         }
 
         [HttpGet("OrderList")]
-        public IActionResult OrderList(int orderid, string ordercode, int paytype, int state, DateTime begintime, DateTime endtime)
+        public IActionResult OrderList(string ordercode, DateTime? begintime = null, DateTime? endtime = null, string name = null, int state = 0, int paytype = 0)
         {
-            var list = db.Queryable<Order>().ToList();
+            var list = db.Queryable<Order>();
+            if (!string.IsNullOrEmpty(name))
+            {
+                list = list.Where(a => a.UserName.Contains(name));
+            }
+            if (!string.IsNullOrEmpty(ordercode))
+            {
+                list = list.Where(a => a.OrderCode.Contains(ordercode));
+            }
+            if (begintime != null)
+            {
+                list = list.Where(a => a.AddTime >= (begintime));
+            }
+            if (endtime != null)
+            {
+                list = list.Where(a => a.AddTime <= (endtime));
+            }
+            if (paytype != 0)
+            {
+                list = list.Where(a => ((int)a.PayType) == paytype);
+            }
+            if (state != 0)
+            {
+                list = list.Where(a => ((int)a.OrderState) == (state));
+            }
             return Ok(list);
         }
     }
