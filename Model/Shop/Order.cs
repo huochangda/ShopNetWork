@@ -48,6 +48,9 @@ namespace Model.Shop
         public decimal Freight { get; set; }
 
         public string ComeFrom { get; set; }
+
+        [SugarColumn(IsIgnore = true)]
+        public List<Goods>? goods { get; set; }
     }
 
     public enum PayType

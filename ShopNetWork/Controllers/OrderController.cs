@@ -57,37 +57,65 @@ namespace ShopNetWork.Controllers
             }
         }
 
+        /// <summary>
+        /// 订单列表
+        /// </summary>
+        /// <param name="ordercode"></param>
+        /// <param name="begintime"></param>
+        /// <param name="endtime"></param>
+        /// <param name="name"></param>
+        /// <param name="state"></param>
+        /// <param name="paytype"></param>
+        /// <returns></returns>
         [HttpGet("OrderList")]
-        public IActionResult OrderList(string ordercode, DateTime? begintime = null, DateTime? endtime = null, string name = null, int state = 0, int paytype = 0)
+        public IActionResult OrderList(int pageIndex, int pageSize, string ordercode, string?
+            begintime = null, string? endtime = null, string name = null, int state = 0, int paytype = 0)
         {
-            var list = db.Queryable<Order>();
-            if (!string.IsNullOrEmpty(name))
+            #region
+
+            int pageCount = 0;
+            int totalCount = 0;
+
+            var list = (from o in db.Queryable<Order>().ToList()
+                        join og in db.Queryable<OrderGoods>().ToList()
+                        on o.OrderId equals og.OrderId
+                        join g in db.Queryable<Goods>().ToList()
+                        on og.GoodId equals g.GoodId
+                        where (string.IsNullOrEmpty(ordercode) || o.OrderCode.Contains(ordercode))
+                        && (string.IsNullOrEmpty(begintime) || o.AddTime >= DateTime.Parse(begintime))
+                        && (string.IsNullOrEmpty(endtime) || o.AddTime < DateTime.Parse(endtime).AddDays(1))
+                        && (string.IsNullOrEmpty(name) || o.UserName.Contains(name))
+                        && (paytype == 0 || ((int)o.PayType) == paytype)
+                        && (state == 0 || ((int)o.OrderState) == state)
+                        select o);
+
+            foreach (var item in list)
             {
-                list = list.Where(a => a.UserName.Contains(name));
+                item.goods = (from og in db.Queryable<OrderGoods>().ToList()
+                              join g in db.Queryable<Goods>().ToList()
+                           on og.GoodId equals g.GoodId
+                              where (og.OrderId == item.OrderId)
+                              select g).ToList();
             }
-            if (!string.IsNullOrEmpty(ordercode))
+
+            totalCount = list.Count();
+            pageCount = (int)Math.Ceiling(totalCount * 1.0 / pageSize);
+            list = list.Skip((pageIndex - 1) * pageSize).Take(pageSize);
+
+            return Ok(new
             {
-                list = list.Where(a => a.OrderCode.Contains(ordercode));
-            }
-            if (begintime != null)
-            {
-                list = list.Where(a => a.AddTime >= (begintime));
-            }
-            if (endtime != null)
-            {
-                list = list.Where(a => a.AddTime <= (endtime));
-            }
-            if (paytype != 0)
-            {
-                list = list.Where(a => ((int)a.PayType) == paytype);
-            }
-            if (state != 0)
-            {
-                list = list.Where(a => ((int)a.OrderState) == (state));
-            }
-            return Ok(list);
+                totalCount = totalCount,
+                pageCount = pageCount,
+                list = list.ToList()
+            });
+
+            #endregion 莫总代码
         }
 
+        /// <summary>
+        /// 获取枚举订单状态
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetEnumOrderState")]
         public IActionResult GetEnumOrderState()
         {
@@ -103,19 +131,25 @@ namespace ShopNetWork.Controllers
             return Ok(list2);
         }
 
-        [HttpGet("GetEnumOrderType")]
-        public IActionResult GetEnumOrderType()
+        /// <summary>
+        /// 获取枚举支付类型
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetEnumPayType")]
+        public IActionResult GetEnumPayType()
         {
-            OrderState state = new OrderState();
-            Dictionary<string, int> list = Enum.GetValues(typeof(PayType))
-            .Cast<PayType>()
-            .ToDictionary(enumVal => enumVal.ToString(), enumVal => (int)enumVal);
-            var list2 = list.Select(a => new
+            var a = typeof(Order);
+            var b = Enum.GetValues<PayType>();
+            List<object> list = new List<object>();
+            foreach (var item in Enum.GetValues<PayType>())
             {
-                label = a.Key,
-                value = a.Value.ToString()
-            });
-            return Ok(list2);
+                list.Add(new
+                {
+                    name = item.ToString(),
+                    value = item,
+                });
+            }
+            return Ok(list);
         }
     }
 }
