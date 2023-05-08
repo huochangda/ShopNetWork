@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Model.Shop;
+using NPOI.SS.Formula.Functions;
 using RabbitMQ.Client;
 using ShopNet.Core;
 using ShopNetWork.Interfaces;
@@ -58,6 +59,130 @@ namespace ShopNetWork.Controllers
         }
 
         /// <summary>
+        /// 修改订单状态
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        [HttpGet("UpdateOrderState")]
+        public IActionResult UpdateOrderState(int id)
+        {
+            try
+            {
+                var a = db.Queryable<Order>().InSingle(id);
+
+                if (a.OrderState > OrderState.退款中)
+                {
+                    a.OrderState = OrderState.待付款;
+                }
+                else
+                {
+                    a.OrderState = a.OrderState + 1;
+                }
+
+                return Ok(db.Updateable(a).RemoveDataCache().ExecuteCommand());
+            }
+            catch (System.Exception ex)
+            {
+                logger.LogError($"修改状态出错{ex.Message}");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 修改订单状态
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        [HttpPut("UpdateOrderState2")]
+        public IActionResult UpdateOrderState2(int id, int state)
+        {
+            try
+            {
+                var a = db.Queryable<Order>().InSingle(id);
+                a.OrderState = (OrderState)state;
+                return Ok(db.Updateable(a).RemoveDataCache().ExecuteCommand());
+            }
+            catch (System.Exception ex)
+            {
+                logger.LogError($"修改状态出错{ex.Message}");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 订单详情
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        [HttpGet("GetOrderDetail")]
+        public IActionResult GetOrderDetail(int id)
+        {
+            try
+            {
+                var a = db.Queryable<Order>().InSingle(id);
+                a.goods = (from b in db.Queryable<Goods>().ToList()
+                           join c in db.Queryable<OrderGoods>().ToList()
+                           on b.GoodId equals c.GoodId
+                           where c.OrderId == a.OrderId
+                           select b).ToList();
+
+                return Ok(a);
+            }
+            catch (System.Exception ex)
+            {
+                logger.LogError($"修改状态出错{ex.Message}");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 订单物流信息
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        [HttpGet("GetOrderLogstic")]
+        public IActionResult GetOrderLogstic(int id)
+        {
+            try
+            {
+                var a = db.Queryable<OrderLogistics>().Where(a => a.OrderId == id).ToList();
+
+                return Ok(a);
+            }
+            catch (System.Exception ex)
+            {
+                logger.LogError($"修改状态出错{ex.Message}");
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 批量修改订单状态
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        [HttpPut("UpdateOrderStateAll")]
+        public IActionResult UpdateOrderStateAll(string ids, int state)
+        {
+            try
+            {
+                string[] arr = ids.Split(',');
+                List<Order> a = db.Queryable<Order>().Where(a => ids.Contains(a.OrderId.ToString())).ToList();
+                foreach (var item in a.ToList())
+                {
+                    item.OrderState = (OrderState)state;
+                }
+
+                return Ok(db.Updateable(a).RemoveDataCache().ExecuteCommand());
+            }
+            catch (System.Exception ex)
+            {
+                logger.LogError($"批量修改状态出错{ex.Message}");
+                throw;
+            }
+        }
+
+        /// <summary>
         /// 订单列表
         /// </summary>
         /// <param name="ordercode"></param>
@@ -87,7 +212,7 @@ namespace ShopNetWork.Controllers
                         && (string.IsNullOrEmpty(name) || o.UserName.Contains(name))
                         && (paytype == 0 || ((int)o.PayType) == paytype)
                         && (state == 0 || ((int)o.OrderState) == state)
-                        select o);
+                        select o).Distinct();
 
             foreach (var item in list)
             {
@@ -96,6 +221,11 @@ namespace ShopNetWork.Controllers
                            on og.GoodId equals g.GoodId
                               where (og.OrderId == item.OrderId)
                               select g).ToList();
+                item.GoodCount = 0;
+                foreach (var item1 in item.goods)
+                {
+                    item.GoodCount += db.Queryable<OrderGoods>().First(a => a.GoodId == item1.GoodId && a.OrderId == item.OrderId).BuyCount;
+                }
             }
 
             totalCount = list.Count();
