@@ -3,11 +3,13 @@ using Microsoft.Extensions.Logging;
 using Model;
 using Model.Shop;
 using Newtonsoft.Json;
+using NPOI.SS.Formula.Functions;
 using RabbitMQ.Client;
 using ShopNet.Core;
 using ShopNetWork.Interfaces;
 using SqlSugar;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ShopNetWork.Controllers
 {
@@ -33,6 +35,31 @@ namespace ShopNetWork.Controllers
             this.db = db;
             this.goodTypeServices = goodTypeServices;
             this.unitOfWork = unitOfWork;
+        }
+
+        [HttpGet("GetGoodTypeStatic")]
+        public IActionResult GetGoodTypeStatic()
+        {
+            try
+            {
+                var list = db.Queryable<Goods>().ToList().GroupBy(a => a.GoodTypeId);
+                var list2 = list.Select(g => new
+                {
+                    typeid = g.Key,
+                    count = g.Sum(a => a.Num),
+                });
+                var list3 = list2.Join(db.Queryable<GoodType>().ToList(), a => a.typeid, b => b.GoodTypeId, (a, b) => new
+                {
+                    typename = b.TypeName,
+                    Count = a.count,
+                }).ToList();
+                return Ok(new { list3, list });
+            }
+            catch (System.Exception ex)
+            {
+                logger.LogError($",报错信息{ex.Message}");
+                throw;
+            }
         }
 
         [HttpGet("GetTree")]

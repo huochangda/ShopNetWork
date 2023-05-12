@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Model.Shop;
 using NPOI.SS.Formula.Functions;
@@ -9,6 +11,7 @@ using ShopNetWork.Interfaces;
 using SqlSugar;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Yitter.IdGenerator;
 
@@ -183,6 +186,32 @@ namespace ShopNetWork.Controllers
         }
 
         /// <summary>
+        /// 批量删除订单
+        /// </summary>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        [HttpDelete("DeleteOrderAll")]
+        public IActionResult DeleteOrderAll(string ids)
+        {
+            try
+            {
+                string[] arr = ids.Split(',');
+                List<Order> a = db.Queryable<Order>().Where(a => ids.Contains(a.OrderId.ToString())).ToList();
+                foreach (var item in a.ToList())
+                {
+                    item.IsOpen = false;
+                }
+
+                return Ok(db.Updateable(a).RemoveDataCache().ExecuteCommand());
+            }
+            catch (System.Exception ex)
+            {
+                logger.LogError($"批量修改状态出错{ex.Message}");
+                throw;
+            }
+        }
+
+        /// <summary>
         /// 订单列表
         /// </summary>
         /// <param name="ordercode"></param>
@@ -212,6 +241,7 @@ namespace ShopNetWork.Controllers
                         && (string.IsNullOrEmpty(name) || o.UserName.Contains(name))
                         && (paytype == 0 || ((int)o.PayType) == paytype)
                         && (state == 0 || ((int)o.OrderState) == state)
+                        && (o.IsOpen == true)
                         select o).Distinct();
 
             foreach (var item in list)
@@ -240,6 +270,31 @@ namespace ShopNetWork.Controllers
             });
 
             #endregion 莫总代码
+
+            // 定义输入参数
+            //     var page = new SugarParameter("@page", pageIndex);
+            //     var size = new SugarParameter("@size", pageSize);
+            //     var totalCount = new SugarParameter("@totalCount", 0, true);
+            //     var pageCount = new SugarParameter("@pageCount", 0, true);
+            //     var orderCode = new SugarParameter("@orderCode", ordercode ?? "");
+            //     var gName = new SugarParameter("@gName", name ?? "");
+            //     var payType = new SugarParameter("@payType", paytype);
+            //     var orderState = new SugarParameter("@orderState", state);
+            //     var sDate = new SugarParameter("@sDate", begintime ?? "");
+            //     var eDate = new SugarParameter("@eDate", endtime ?? "");
+
+            //     var result = db.Ado.SqlQuery<Order>("EXEC p_GetOrderList @page,@size,@totalCount OUTPUT,@pageCount OUTPUT,@orderCode,@gName,@payType,@orderState,@sDate,@eDate",
+            //page, size, totalCount, pageCount, orderCode, gName, payType, orderState, sDate, eDate);
+
+            //     // 获取输出参数的值
+            //     var total = totalCount.Value;
+            //     var count = pageCount.Value;
+            //     return Ok(new
+            //     {
+            //         totalCount = total,
+            //         pageCount = count,
+            //         list = result.ToList()
+            //     });
         }
 
         /// <summary>

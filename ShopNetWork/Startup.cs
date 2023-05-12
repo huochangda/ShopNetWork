@@ -91,7 +91,7 @@ namespace ShopNetWork
             //swagger添加报文头，方便做登录和退出：
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "_3315work", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ShopNetWork", Version = "v1" });
                 //配置注释显示swagge ui当中
                 var xmlfile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlpath = Path.Combine(AppContext.BaseDirectory, xmlfile);
