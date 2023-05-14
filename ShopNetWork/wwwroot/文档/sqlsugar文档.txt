@@ -1,0 +1,105 @@
+DataCache：获取SugarCacheProvider对象，用于缓存数据。
+MappingTables：获取或设置MappingTableList对象，用于映射表格。
+MappingColumns：获取或设置MappingColumnList对象，用于映射列。
+IgnoreColumns：获取或设置IgnoreColumnList对象，用于忽略列。
+IgnoreInsertColumns：获取或设置IgnoreColumnList对象，用于忽略插入操作的列。
+TempItems：获取或设置Dictionary<string, object>对象，用于存储临时数据。
+ConfigQuery：获取或设置ConfigQuery对象，用于配置查询。
+IsSystemTablesConfig：获取一个bool值，表示是否配置了系统表格。
+ContextID：获取或设置Guid类型的上下文ID。
+CurrentConnectionConfig：获取或设置ConnectionConfig对象，代表当前数据库连接的配置信息。
+EntityMaintenance：获取或设置EntityMaintenance对象，用于维护实体对象。
+SugarActionType：获取或设置SugarActionType枚举，表示当前执行的SQL语句类型。
+Utilities：获取或设置IContextMethods对象，提供一些实用方法。
+QueryFilter：获取或设置QueryFilterProvider对象，用于过滤查询结果。
+Ado：获取IAdo对象，用于访问ADO.NET。
+DbMaintenance：获取IDbMaintenance对象，用于维护数据库结构。
+Queues：获取或设置QueueList对象，用于保存SQL语句的队列。
+CodeFirst：获取ICodeFirst对象，用于使用CodeFirst方式创建数据库。
+Aop：获取AopProvider对象，用于提供面向切面编程功能。
+DbFirst：获取IDbFirst对象，用于使用DbFirst方式生成实体类和SQL语句。
+AddQueue(string sql, object parameters = null)
+此方法将SQL查询语句和参数添加到一个队列中，以供稍后执行。可以传入一个对象参数或者不传参数。
+
+AddQueue(string sql, SugarParameter parameter)
+此方法将SQL查询语句和单个参数添加到一个队列中，以供稍后执行。需要传入一个SugarParameter类型的参数。
+
+AddQueue(string sql, List<SugarParameter> parameters)
+此方法将SQL查询语句和多个参数添加到一个队列中，以供稍后执行。需要传入一个SugarParameter类型的List集合。
+
+ITenant AsTenant()
+返回一个实现了ITenant接口的对象，用于在多租户应用程序中切换租户。
+
+void Close()
+关闭数据库连接并释放相关资源。
+
+SqlSugarClient CopyNew()
+创建并返回一个新的SqlSugarClient对象，用于在同一应用程序中使用多个数据库连接。
+
+CreateContext(bool isTran = true)：创建一个新的工作单元并返回它。
+CreateContext<T>(bool isTran = true) where T : SugarUnitOfWork, new()：使用指定类型创建一个新的工作单元并返回它。
+Deleteable<T>() where T : class, new()：创建一个可删除实体的查询对象。
+Deleteable<T>(Expression<Func<T, bool>> expression) where T : class, new()：创建一个可删除满足特定条件的实体的查询对象。
+Deleteable<T>(List<dynamic> pkValue) where T : class, new()：创建一个可通过主键值删除实体的查询对象。
+Deleteable<T>(dynamic primaryKeyValue) where T : class, new()：创建一个可通过单个主键值删除实体的查询对象。
+Deleteable<T>(dynamic[] primaryKeyValues) where T : class, new()：创建一个可通过多个主键值删除实体的查询对象。
+Deleteable<T>(List<T> deleteObjs) where T : class, new()：创建一个可删除给定实体列表的查询对象。
+Deleteable<T>(T deleteObj) where T : class, new()：创建一个可删除给定实体的查询对象。
+DeleteNavTaskInit<T, T> DeleteNav<T>(Expression<Func<T, bool>> whereExpression) where T : class, new()：创建一个可删除导航属性（即子实体）的查询对象。
+DeleteNavTaskInit<T, T> DeleteNav<T>(List<T> datas) where T : class, new()：创建一个可删除导航属性列表（即子实体列表）的查询对象。
+DeleteNavTaskInit<T, T> DeleteNav<T>(T data) where T : class, new()：创建一个可删除单个导航属性（即单个子实体）的查询对象。
+DynamicBuilder()：创建一个动态SQL语句构建器。
+Fastest<T>() where T : class, new()：创建一个最快的实体查询对象，该对象使用简单的SQL和轻量级的ORM映射。
+GetDate()：获取当前数据库服务器的日期和时间。
+GetRepository<RepositoryType>() where RepositoryType : ISugarRepository, new()：获取指定类型的仓库对象。
+GetSimpleClient<T>() where T : class, new()：获取指定实体类型的简单客户端对象，它提供了一些常用的操作，如插入、更新和删除。
+InitMappingInfo<T>()：初始化指定类型的ORM映射信息。
+InitMappingInfo(Type type)：初始化指定类型的ORM映射信息。
+Insertable<T>(List<T> insertObjs) where T : class, new()：创建一个可插入给定实体列表的查询对象。
+Insertable<T>(Dictionary<string, object> columnDictionary) where T : class, new()：创建一个可插入通过列名和值对字典定义的实体的查询对象。
+Insertable<T>(dynamic insertDynamicObject) where T : class, new()：创建一个可插入通过动态对象定义的实体的查询对象。
+Insertable<T>(T[] insertObjs) where T : class, new()：创建一个可插入给定实体数组的查询对象。
+Insertable<T>(T insertObj) where T : class, new()：创建一个可插入给定实体的查询对象。
+InsertableByDynamic(object insertDynamicObject)：创建一个可插入通过动态对象定义的实体的查询对象，并返回字典类型的结果。
+InsertableByObject(object singleEntityObjectOrListObject)：创建一个可插入通过单个实体对象或实体对象列表定义的实体的查询对象，并返回插入信息。
+InsertNavTaskInit<T, T> InsertNav<T>(List<T> datas, InsertNavRootOptions rootOptions) where T : class, new()：创建一个可插入导航属性列表（即
+
+ISugarQueryable<T> MasterQueryable<T>(): 返回一个ISugarQueryable对象，它可以用于构建主数据库的查询。
+void Open(): 打开数据库连接。
+ISugarQueryable<T> Queryable<T>(string shortName): 根据指定的类型和表名返回一个ISugarQueryable对象，它可以用于构建和执行查询。
+ISugarQueryable<T> Queryable<T>(ISugarQueryable<T> queryable): 返回一个ISugarQueryable对象，它可以用于构建和执行查询。该对象的查询条件由传入的queryable参数指定。
+ISugarQueryable<T> Queryable<T>(): 返回一个ISugarQueryable对象，它可以用于构建和执行查询，查询的目标为T类型的表。
+ISugarQueryable<T, T2, T3, T4> Queryable<T, T2, T3, T4>(...): 返回一个ISugarQueryable对象，它可以用于构建和执行跨多个表的联接查询。该方法支持最多四个表的联接查询。
+ISugarQueryable<T, T2, T3> Queryable<T, T2, T3>(...): 返回一个ISugarQueryable对象，它可以用于构建和执行跨多个表的联接查询。该方法支持最多三个表的联接查询。
+ISugarQueryable<T, T2> Queryable<T, T2>(...): 返回一个ISugarQueryable对象，它可以用于构建和执行跨两个表的联接查询。
+ISugarQueryable<T, T2> Queryable<T, T2>(...): 返回一个ISugarQueryable对象，它可以用于构建和执行跨两个表的联接查询，联接条件由传入的Expression<Func<T, T2, bool>>参数指定。
+ISugarQueryable<T, T2> Queryable<T, T2>(...): 返回一个ISugarQueryable对象，它可以用于构建和执行跨两个表的联接查询。联接条件由传入的Expression<Func<T, T2, object[]>>参数指定。
+ISugarQueryable<T, T2> Queryable<T, T2>(...): 返回一个ISugarQueryable对象，它可以用于构建和执行跨两个表的联接查询。联接条件由传入的Expression<Func<T, T2, JoinQueryInfos>>参数指定。
+ISugarQueryable<T, T2> Queryable<T, T2>(...): 返回一个ISugarQueryable对象，它可以用于构建和执行跨两个表的联接查询。联接条件由传入的Expression<Func<T, T2, bool>>参数指定。
+ISugarQueryable<T, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> Queryable<T, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>(...): 返回一个ISugarQueryable对象，它可以用于构建和执行跨多个表的联接查询。该方法支持最多12个表的联接查询。
+ISugarQueryable<ExpandoObject> Queryable(string tableName, string shortName): 返回一个ISugarQueryable对象，它可以用于构建和执行查询。查询的目标为指定的表，并返回一个动态类型。
+ISugarQueryable<T, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> Queryable<T, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>(...): 返回一个ISugarQueryable对象，它可以用于构建和执行跨多个表的联接查询。该方法支持最多11个表的联接查询。
+`ISugarQueryable<T, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> Queryable<T, T2, T3, T4, T5, T6
+
+
+IReportable<T> Reportable<T>(T[] array)：将给定的数组转换为IReportable接口类型。
+IReportable<T> Reportable<T>(List<T> list)：将给定的列表转换为IReportable接口类型。
+IReportable<T> Reportable<T>(T data)：将给定的数据转换为IReportable接口类型。
+[Obsolete("use Storageable")] ISaveable<T> Saveable<T>(List<T> saveObjects) where T : class, new()：使用过时的方式保存给定的对象列表，返回ISaveable接口类型。
+[Obsolete("use Storageable")] ISaveable<T> Saveable<T>(T saveObject) where T : class, new()：使用过时的方式保存给定的对象，返回ISaveable接口类型。
+Tuple<List<T>, List<T2>, List<T3>, List<T4>, List<T5>> SaveQueues<T, T2, T3, T4, T5>(bool isTran = true)：以元组形式返回多个对象列表，用于保存多个对象。
+Tuple<List<T>, List<T2>> SaveQueues<T, T2>(bool isTran = true)：以元组形式返回两个对象列表，用于保存多个对象。
+List<T> SaveQueues<T>(bool isTran = true)：返回单个对象列表，用于保存多个对象。
+Tuple<List<T>, List<T2>, List<T3>, List<T4>, List<T5>, List<T6>> SaveQueues<T, T2, T3, T4, T5, T6>(bool isTran = true)：以元组形式返回多个对象列表，用于保存多个对象。
+Tuple<List<T>, List<T2>, List<T3>, List<T4>, List<T5>, List<T6>, List<T7>> SaveQueues<T, T2, T3, T4, T5, T6, T7>(bool isTran = true)：以元组形式返回多个对象列表，用于保存多个对象。
+Tuple<List<T>, List<T2>, List<T3>, List<T4>> SaveQueues<T, T2, T3, T4>(bool isTran = true)：以元组形式返回多个对象列表，用于保存多个对象。
+int SaveQueues(bool isTran = true)：返回整数值，表示成功保存的对象数量。
+Tuple<List<T>, List<T2>, List<T3>> SaveQueues<T, T2, T3>(bool isTran = true)：以元组形式返回多个对象列表，用于保存多个对象。
+Task<List<T>> SaveQueuesAsync<T>(bool isTran = true)：以异步方式返回单个对象列表，用于保存多个对象。
+Task<int> SaveQueuesAsync(bool isTran = true)：以异步方式返回整数值，表示成功保存的对象数量。
+Task<Tuple<List<T>, List<T2>, List<T3>, List<T4>, List<T5>, List<T6>, List<T7>>> SaveQueuesAsync<T, T2, T3, T4, T5, T6, T7>(bool isTran = true)：以异步方式返回多个对象列表，用于保存多个对象。
+Task<Tuple<List<T>, List<T2>, List<T3>, List<T4>, List<T5>, List<T6>>> SaveQueuesAsync<T, T2, T3, T4, T5, T6>(bool isTran = true)：以异步方式返回多个对象列表，用于保存多个对象。
+Task<Tuple<List<T>, List<T2>, List<T3>, List<T4>, List<T5>>> SaveQueuesAsync<T, T2, T3, T4, T5>(bool isTran = true)：以异步方式返回多个对象列表，用于保存多个对象。
+Task<Tuple<List<T>, List<T2>>> SaveQueuesAsync<T, T2>(bool isTran = true)：以异步方式返回多个对象列表，用于保存多个对象。
+Task<Tuple<List<T>, List<T2>, List<T3>>> SaveQueuesAsync<T, T2, T3>(bool isTran
+

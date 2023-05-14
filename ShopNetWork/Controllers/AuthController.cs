@@ -74,13 +74,13 @@ namespace ShopNetWork.Controllers
         [HttpPost("UserLogin")]
         public IActionResult UserLogin(string username, string password, string autocode, string uuid)
         {
-           // List<User> response = cacheService.Get<List<User>>("User");
-            
-           //var res= response.AsEnumerable().Where(a => a.UserName == username && a.PassWord == password);
-            
+            // List<User> response = cacheService.Get<List<User>>("User");
+
+            //var res= response.AsEnumerable().Where(a => a.UserName == username && a.PassWord == password);
+
             //if(res.Count()==0)
             //{
-              var  response = db.Queryable<User>().Where(a => a.UserName == username && a.PassWord == password).ToList();
+            var response = db.Queryable<User>().Where(a => a.UserName == username && a.PassWord == password).ToList();
             //    if (response.Count > 0)
             //    {
             //        cacheService.Add<List<User>>("User",response,30);

@@ -83,6 +83,10 @@ namespace ShopNetWork
             //{
             //    options.Filters.Add(typeof(UserActionFilter));
             //});È«¾Ö¹ýÂËÆ÷
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(typeof(CustomExceptionFileter));
+            });
 
             services.AddScoped<RedisCache>();
 
